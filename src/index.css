@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+/*
+  Design tokens. The app is dark-only: raw values live on :root and are
+  surfaced to Tailwind through @theme so utilities like `bg-surface-1` or
+  `text-secondary` resolve to them.
+
+  "Warm charcoal" palette: brown-tinted grays that read like a binder or a card
+  shop, paired with a single clay accent. The chrome text carries the same
+  warmth (#F2EDE6, not pure white) so it sits *in* the shell rather than on top
+  of it. The energy-type scale (typeColors.ts) supplies the "Pokémon" color.
+*/
+:root {
+  color-scheme: dark;
+
+  --surface-0: #14110e;
+  --surface-1: #1c1815;
+  --surface-2: #231e1a;
+  --border: rgba(255, 240, 220, 0.1);
+  --border-strong: rgba(255, 240, 220, 0.2);
+  --text-primary: #f2ede6;
+  --text-secondary: #a89f94;
+  /* Lifted from #766d62 so muted body text clears WCAG AA (>=4.5:1) on
+     every surface. Still reads clearly quieter than --text-secondary. */
+  --text-muted: #948a7e;
+  --accent: #e07a4f;
+  --accent-soft: #b06844;
+  --accent-faint: rgba(224, 122, 79, 0.16);
+  --bg-accent: rgba(224, 122, 79, 0.16);
+  --text-accent: #e8956b;
+  --positive: #86ac6b;
+  /* Lifted from #4b6440 for >=3:1 non-text contrast against the panel it
+     sits on in the rarity bar. */
+  --positive-soft: #5f7d4f;
+}
+
+@theme inline {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-faint: var(--accent-faint);
+  --color-bg-accent: var(--bg-accent);
+  --color-text-accent: var(--text-accent);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+
+  --radius-card: 12px;
+
+  --font-sans: 'Inter Variable', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Card modal zoom. The subtree mounts fresh on every open, so the `-in`
+   animations run once on mount; adding [data-closing] swaps in the `-out`
+   animation, whose different name guarantees it replays. */
+@keyframes card-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes card-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes card-modal-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes card-modal-zoom-out {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.card-modal-backdrop {
+  animation: card-modal-fade-in 200ms ease;
+}
+
+.card-modal-panel {
+  animation: card-modal-zoom-in 200ms ease;
+}
+
+.card-modal-backdrop[data-closing] {
+  animation: card-modal-fade-out 200ms ease forwards;
+}
+
+.card-modal-panel[data-closing] {
+  animation: card-modal-zoom-out 200ms ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-modal-backdrop,
+  .card-modal-panel {
+    animation-duration: 1ms;
+  }
+}
+
+/* Rarity-mix bar: the segments grow from their left edge one after another —
+   each one's delay is the sum of the earlier segments' durations (set inline),
+   so a color only starts once the previous has finished. `both` holds each
+   segment at scaleX(0) through its delay so nothing flashes early. */
+@keyframes rarity-seg-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.rarity-seg {
+  transform-origin: left center;
+  animation: rarity-seg-in 400ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rarity-seg {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Native <select> with a custom chevron inset from the right edge (the browser
+   default sits flush against the border and ignores padding). */
+.select-chevron {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.75 4.5 6 7.75 9.25 4.5' stroke='%23a89f94' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.625rem center;
+}
+
+/* Inter reads a touch better with slightly tightened headings. */
+h1,
+h2 {
+  letter-spacing: -0.01em;
+}
