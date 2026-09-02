@@ -2,6 +2,8 @@
 
 A dashboard for digging through Ash's ~2,100-card Pokémon TCG collection. Summary stats, one chart, and a filterable grid of every card.
 
+**Live site:** https://king-pokemon-assignment.vercel.app/
+
 ---
 
 ## Application flow
@@ -77,6 +79,7 @@ src/
 - **Accessibility.** Color contrast is covered, but keyboard and screen-reader support is thin. The card modal needs a focus trap and focus return, the sortable table headers need `aria-sort`, and the scatter chart is mouse-only.
 - **Responsive layout.** The card and stat grids already reflow, but the frame is desktop-first. The sidebar is a fixed column with no mobile menu, and the scatter and table are tight on a phone.
 - **Better error handling.** Right now there is one error boundary at the top with a "reload the page" message. I would add a retry that re-runs the fetch without a full refresh, a route-level `errorElement` and a 404 page, and error reporting to something like Sentry.
+- **Better loading UX.** The first load shows one centered "Loading…" line while the 2.6 MB file downloads. Skeleton stat tiles, chart, and table would make the wait feel shorter.
 - **Filters in the URL** so a filtered view can be shared.
 - **i18n.** All the copy is hard-coded English. It would move into a message catalogue (`react-intl` or `i18next`) with locale-aware number formatting.
 - **Component and interaction tests.** Only the `src/lib` functions have tests so far.
